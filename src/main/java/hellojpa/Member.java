@@ -13,7 +13,8 @@ public class Member {
     @Column(name = "USERNAME")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // team은 proxy 객체, 지연 로딩
+    // @ManyToOne(fetch = FetchType.EAGER) // team 객체, 즉시 로딩
     @JoinColumn(name ="TEAM_ID")
     private Team team;
 
