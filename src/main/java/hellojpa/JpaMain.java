@@ -14,17 +14,19 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            /* (프록시)
+                Team team = new Team();
+                team.setName("teamA");
+                em.persist(team);
 
-            Member member = new Member();
-            member.setName("hello");
-            member.changeTeam(team);
-            em.persist(member);
+                Member member = new Member();
+                member.setName("hello");
+                member.changeTeam(team);
+                em.persist(member);
 
-            em.flush();
-            em.clear();
+                em.flush();
+                em.clear();
+            */
 
             /*  (em.find)
                 // findMember: 진짜 객체
@@ -43,10 +45,32 @@ public class JpaMain {
                 System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(findMember));
             */
 
-            Member m = em.find(Member.class, member.getId());
+            /*  (LAZY 로딩 & EAGER 로딩)
+                Member m = em.find(Member.class, member.getId());
 
-            System.out.println("m = "+m.getTeam().getClass());
-            System.out.println("teamName = "+m.getTeam().getName());
+                System.out.println("m = "+m.getTeam().getClass());
+                System.out.println("teamName = "+m.getTeam().getName());
+            */
+
+
+            Child child1 = new Child();
+            Child child2 = new Child();
+
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+
+            em.persist(parent);
+//            em.persist(child1);
+//            em.persist(child2);
+
+            em.flush();
+            em.clear();
+
+            Parent findParent = em.find(Parent.class, parent.getId());
+            findParent.getChildList().remove(0);
+
 
             tx.commit();
         }catch(Exception e) {
