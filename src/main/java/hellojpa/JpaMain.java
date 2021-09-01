@@ -52,24 +52,33 @@ public class JpaMain {
                 System.out.println("teamName = "+m.getTeam().getName());
             */
 
+            /*  (영속성 전이 & 고아 객체 )
+                Child child1 = new Child();
+                Child child2 = new Child();
 
-            Child child1 = new Child();
-            Child child2 = new Child();
-
-            Parent parent = new Parent();
-            parent.addChild(child1);
-            parent.addChild(child2);
+                Parent parent = new Parent();
+                parent.addChild(child1);
+                parent.addChild(child2);
 
 
-            em.persist(parent);
-//            em.persist(child1);
-//            em.persist(child2);
+                em.persist(parent);
+                // em.persist(child1);
+                // em.persist(child2);
 
-            em.flush();
-            em.clear();
+                em.flush();
+                em.clear();
 
-            Parent findParent = em.find(Parent.class, parent.getId());
-            findParent.getChildList().remove(0);
+                Parent findParent = em.find(Parent.class, parent.getId());
+                findParent.getChildList().remove(0);
+            */
+
+            // 임베디드 타입
+            Member member = new Member();
+            member.setName("Hello");
+            member.setAddress(new Address("city", "street", "100"));
+            member.setPeriod(new Period());
+
+            em.persist(member);
 
 
             tx.commit();
