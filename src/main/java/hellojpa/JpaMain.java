@@ -72,13 +72,20 @@ public class JpaMain {
                 findParent.getChildList().remove(0);
             */
 
-            // 임베디드 타입
-            Member member = new Member();
-            member.setName("Hello");
-            member.setAddress(new Address("city", "street", "100"));
-            member.setPeriod(new Period());
+            /*
+                // 임베디드 타입
+                Member member = new Member();
+                member.setName("Hello");
+                member.setAddress(new Address("city", "street", "100"));
+                member.setPeriod(new Period());
 
-            em.persist(member);
+                em.persist(member);
+            */
+
+            // 값타입 비교, 동등성 비교
+            Address address1 = new Address("city", "street", "100");
+            Address address2 = new Address("city", "street", "100");
+            System.out.println(address1.equals(address2));
 
 
             tx.commit();
