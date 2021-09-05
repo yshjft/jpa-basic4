@@ -3,7 +3,9 @@ package hellojpa;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Member {
@@ -14,28 +16,51 @@ public class Member {
     @Column(name = "USERNAME")
     private String name;
 
-    @Embedded
-    private Period period;
+    /* (임베디드 타입)
+        @Embedded
+        private Period period;
 
-    @Embedded
-    private Address address;
+        @Embedded
+        private Address address;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name="city",
-                    column=@Column(name = "office_city")),
-            @AttributeOverride(name="street",
-                    column=@Column(name = "office_street")),
-            @AttributeOverride(name="zipcode",
-                    column=@Column(name = "office_zipcode")),
-    })
-    private Address officeAddress;
+        @Embedded
+        @AttributeOverrides({
+                @AttributeOverride(name="city",
+                        column=@Column(name = "office_city")),
+                @AttributeOverride(name="street",
+                        column=@Column(name = "office_street")),
+                @AttributeOverride(name="zipcode",
+                        column=@Column(name = "office_zipcode")),
+        })
+        private Address officeAddress;
+    */
 
-    @ManyToOne(fetch = FetchType.LAZY) // team은 proxy 객체, 지연 로딩
-    // @ManyToOne(fetch = FetchType.EAGER) // team 객체, 즉시 로딩
+    // (값 타입 컬렉션)
+    @Embedded
+    private Address homeAddress;
+
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD", joinColumns =
+        @JoinColumn(name="MEMBER_ID")
+    )
+    @Column(name="FOOD_NAME")
+    private Set<String> favoriteFood = new HashSet<>();
+
+    //    @ElementCollection
+    //    @CollectionTable(name = "ADDRESS", joinColumns =
+    //        @JoinColumn(name="MEMBER_ID")
+    //    )
+    //    private List<Address> addressHistory = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="MEMBER_ID")
+    List<AddressEntity> addressHistory = new ArrayList<>();
+
+    // (fetch = FetchType.EAGER): team 객체, 즉시 로딩
+    // (fetch = FetchType.LAZY): team은 proxy 객체, 지연 로딩
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="TEAM_ID")
     private Team team;
-
 
     public Long getId() {
         return id;
@@ -53,20 +78,47 @@ public class Member {
         this.name = name;
     }
 
-    public Period getPeriod() {
-        return period;
+    /*  (값 타입 컬렉션)
+        public Period getPeriod() {
+            return period;
+        }
+        public void setPeriod(Period period) {
+            this.period = period;
+        }
+        public Address getAddress() {
+            return address;
+        }
+        public void setAddress(Address address) {
+            this.address = address;
+        }
+    */
+
+    public Address getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setPeriod(Period period) {
-        this.period = period;
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 
-    public Address getAddress() {
-        return address;
+    public Set<String> getFavoriteFood() {
+        return favoriteFood;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setFavoriteFood(Set<String> favoriteFood) {
+        this.favoriteFood = favoriteFood;
+    }
+
+    public List<AddressEntity> getAddressHistory() {
+        return addressHistory;
+    }
+
+    public void setAddressHistory(List<AddressEntity> addressHistory) {
+        this.addressHistory = addressHistory;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public Team getTeam() {

@@ -3,6 +3,8 @@ package hellojpa;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -72,8 +74,7 @@ public class JpaMain {
                 findParent.getChildList().remove(0);
             */
 
-            /*
-                // 임베디드 타입
+            /*  (임베디드 타입)
                 Member member = new Member();
                 member.setName("Hello");
                 member.setAddress(new Address("city", "street", "100"));
@@ -82,10 +83,46 @@ public class JpaMain {
                 em.persist(member);
             */
 
-            // 값타입 비교, 동등성 비교
-            Address address1 = new Address("city", "street", "100");
-            Address address2 = new Address("city", "street", "100");
-            System.out.println(address1.equals(address2));
+            /*  (값타입 비교, 동등성 비교)
+                Address address1 = new Address("city", "street", "100");
+                Address address2 = new Address("city", "street", "100");
+                System.out.println(address1.equals(address2));
+            */
+
+            // (저장)
+            Member member = new Member();
+            member.setName("member1");
+            member.setHomeAddress(new Address("city1", "street", "10000"));
+
+            member.getFavoriteFood().add("치킨");
+            member.getFavoriteFood().add("족발");
+            member.getFavoriteFood().add("피자");
+
+            // member.getAddressHistory().add(new Address("old1", "street", "10001"));
+            // member.getAddressHistory().add(new Address("old2", "street", "10002"));
+            member.getAddressHistory().add(new AddressEntity("old1", "street", "10001"));
+            member.getAddressHistory().add(new AddressEntity("old2", "street", "10002"));
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            // (조회)
+            Member findMember = em.find(Member.class, member.getId()); // 컬렉션들은 모두 지연 로딩이다
+
+            // (수정)
+            Address a = findMember.getHomeAddress();
+            // 값 타입 수정은 setter 사용하지 마세요!, 무조건 통으로 교체할 것
+            findMember.setHomeAddress(new Address("new City", a.getStreet(), a.getZipcode()));
+
+            // JPA에서 알아서 해당 정보 삭제한다.
+            findMember.getFavoriteFood().remove("치킨");
+            findMember.getFavoriteFood().add("한식");
+
+            // remove 할 때 equals를 사용한다
+            // findMember.getAddressHistory().remove(new Address("old1", "street", "10001"));
+            // findMember.getAddressHistory().add(new Address("new1", "street", "10001"));
 
 
             tx.commit();
