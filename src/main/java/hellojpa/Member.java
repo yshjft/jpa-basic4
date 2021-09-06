@@ -51,7 +51,6 @@ public class Member {
     //        @JoinColumn(name="MEMBER_ID")
     //    )
     //    private List<Address> addressHistory = new ArrayList<>();
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="MEMBER_ID")
     List<AddressEntity> addressHistory = new ArrayList<>();
